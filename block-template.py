@@ -1,11 +1,14 @@
 import math
 import random
 
-ACCEPT_THRESHOLD = .98
-NUM_PRIO_FEE_IN_POOL = 6
-MIN_TX_SIZE = 13050
-MAX_TX_SIZE = 13150
+ACCEPT_THRESHOLD = .99
+NUM_PRIO_FEE_IN_POOL = 9
+MIN_TX_SIZE = 7500
+MAX_TX_SIZE = 7550
 ALREADY_GENERATED_COINS = long(13800000 * 1000000000000)
+MIN_BLOCK_SIZE_MEDIAN = 60000
+MIN_SUBSIDY_PER_BLOCK = 600000000000
+BASE_FEE_PER_KB = 2000000000
 
 def median(l):
   if len(l) == 0:
@@ -21,9 +24,9 @@ def median(l):
 
 def get_block_reward(median_size, current_block_size, already_generated_coins):
   base_reward = (0xffffffffffffffff - already_generated_coins) >> (20-(2-1))
-  if base_reward < 600000000000:
-    base_reward = 600000000000
-  full_reward_zone = 60000
+  if base_reward < MIN_SUBSIDY_PER_BLOCK:
+    base_reward = MIN_SUBSIDY_PER_BLOCK
+  full_reward_zone = MIN_BLOCK_SIZE_MEDIAN
   if median_size < full_reward_zone:
     median_size = full_reward_zone
   if current_block_size <= median_size:
@@ -47,13 +50,13 @@ def get_last_100(blocks):
 
 def get_median_size_of_last_100_blocks(blocks):
   m = median(get_last_100(blocks))
-  if m < 60000:
-    return 60000
+  if m < MIN_BLOCK_SIZE_MEDIAN:
+    return MIN_BLOCK_SIZE_MEDIAN
   return m
 
 def get_fee(size, mul):
   size = int((size + 1023) / 1024)
-  return size * 2000000000 * mul
+  return size * BASE_FEE_PER_KB * mul
 
 def get_block_template_size(template):
   return sum(template)
