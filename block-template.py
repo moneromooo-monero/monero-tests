@@ -93,7 +93,7 @@ def build_block_template(blocks, already_generated_coins, tx_size_min, tx_size_m
 #print "Median of %s: %s" % (l, median(l))
 #print "Per kB fee: %f" % (get_fee(1023, 1) / 1e12)
 
-blocks = []
+blocks = [MIN_BLOCK_SIZE_MEDIAN / 2] * 100
 already_generated_coins = ALREADY_GENERATED_COINS
 for h in range(10000):
   template, coinbase, fee = build_block_template(blocks, already_generated_coins, MIN_TX_SIZE, MAX_TX_SIZE)
